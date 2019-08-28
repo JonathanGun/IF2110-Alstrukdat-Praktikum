@@ -1,0 +1,32 @@
+<snippet>
+	<content><![CDATA[
+// Nama/NIM 		: Jonathan Yudi Gunawan/13518084
+// Hari, Tanggal 	: Kamis, ${1:22 Agustus 2019}
+// Topik/Deskripsi 	: ${2:INSERT_YOUR_TOPIC_HERE}/${3:INSERT_YOUR_MEME_HERE}
+
+#include <stdio.h>
+// #include <stdlib.h>
+// #include <fcntl.h>
+// #include <assert.h>
+// #include "boolean.h"
+
+// PROGRAM UTAMA
+int main(){
+	// KAMUS
+	
+	// ALGORITMA
+	// INPUT
+
+	// PROSES
+
+	// OUTPUT
+
+
+	return 0;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>c</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.c</scope>
+</snippet>
