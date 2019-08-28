@@ -3,7 +3,7 @@
 #define _boolean_H
 
 #define boolean unsigned char
-const int true = 1;
-const int false = 0;
+#define true 1
+#define false 0
 
 #endif 
