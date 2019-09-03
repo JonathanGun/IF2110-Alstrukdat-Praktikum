@@ -9,6 +9,13 @@
 #define max(a, b) a>b?a:b
 #define min(a, b) a<b?a:b
 #define swap(a,b) {ElType tmp; tmp = b; b = a; a = tmp;}
+#define ENDL printf("\n")
+#define intput(a) scanf("%d", &a)
+#define intput2(a,b) scanf("%d %d", &a, &b)
+#define charput(a) scanf("%c", &a)
+#define floatput(a) scanf("%f", &a)
+#define print(a) printf("%d\n", a)
+#define swapTab(a, b) {TabInt tmp; CopyTab(b, &tmp); CopyTab(a, &b); CopyTab(tmp, &a);}
 
 /* ********** KONSTRUKTOR ********** */
 /* Konstruktor : create tabel kosong  */
@@ -49,7 +56,7 @@ IdxType GetLastIdx (TabInt T)
 /* Prekondisi : Tabel T tidak kosong */
 /* Mengirimkan indeks elemen T terakhir */
 {
-	return Neff(T);
+	return GetFirstIdx(T) + NbElmt(T) - 1;
 }
 
 /* ********** Test Indeks yang valid ********** */
@@ -57,7 +64,7 @@ boolean IsIdxValid (TabInt T, IdxType i)
 /* Mengirimkan true jika i adalah indeks yang valid utk ukuran tabel */
 /* yaitu antara indeks yang terdefinisi utk container*/
 {
-	return ((GetFirstIdx(T) <= i) && (i <= (GetFirstIdx(T) + MaxNbEl(T))));
+	return ((GetFirstIdx(T) <= i) && (i <= (GetFirstIdx(T) + MaxNbEl(T) - 1)));
 }
 
 boolean IsIdxEff (TabInt T, IdxType i)
@@ -72,14 +79,14 @@ boolean IsIdxEff (TabInt T, IdxType i)
 boolean IsEmpty (TabInt T)
 /* Mengirimkan true jika tabel T kosong, mengirimkan false jika tidak */
 {
-	return Neff(T);
+	return (NbElmt(T) == 0);
 }
 
 /* *** Test tabel penuh *** */
 boolean IsFull (TabInt T)
 /* Mengirimkan true jika tabel T penuh, mengirimkan false jika tidak */
 {
-	return (Neff(T) == MaxNbEl(T));
+	return (NbElmt(T) == MaxNbEl(T));
 }
 
 /* ********** BACA dan TULIS dengan INPUT/OUTPUT device ********** */
@@ -98,13 +105,15 @@ void BacaIsi (TabInt * T)
 	int n;
 	do{
 		scanf("%d", &n);
-	} while (!((0 <= n) && (n <= MaxNbEl(*T))));
+	} while ((n < 0) || (n > MaxNbEl(*T)));
 	if (n == 0){
 		MakeEmpty(T);
 	} else {
 		Neff(*T) = n;
 		fori(*T, i){
-			scanf("%d", TI(*T)[i]);
+			int tmp;
+			scanf("%d", &tmp);
+			TI(*T)[i] = tmp;
 		}
 	}
 }
@@ -127,7 +136,7 @@ void BacaIsiTab (TabInt * T)
 			i++;
 			Neff(*T)++;
 		}
-	} while (!(tmp == -9999) || (Neff(*T) == MaxNbEl(*T)));
+	} while ((tmp != -9999) && !IsFull(*T));
 }
 
 void TulisIsi (TabInt T)
@@ -174,7 +183,7 @@ TabInt PlusTab (TabInt T1, TabInt T2)
 /* Mengirimkan  T1+T2, yaitu setiap elemen T1 dan T2 pada indeks yang sama dijumlahkan */
 {
 	TabInt T3;
-	Neff(T3) = Neff(T1);
+	Neff(T3) = NbElmt(T1);
 	fori(T3, i){
 		TI(T3)[i] = TI(T1)[i] + TI(T2)[i];
 	}
@@ -186,7 +195,7 @@ TabInt MinusTab (TabInt T1, TabInt T2)
 /* Mengirimkan T1-T2, yaitu setiap elemen T1 dikurangi elemen T2 pada indeks yang sama */
 {
 	TabInt T3;
-	Neff(T3) = Neff(T1);
+	Neff(T3) = NbElmt(T1);
 	fori(T3, i){
 		TI(T3)[i] = TI(T1)[i] - TI(T2)[i];
 	}
@@ -198,7 +207,7 @@ TabInt KaliTab (TabInt T1, TabInt T2)
 /* Mengirimkan T1 * T2 dengan definisi setiap elemen dengan indeks yang sama dikalikan */
 {
 	TabInt T3;
-	Neff(T3) = Neff(T1);
+	Neff(T3) = NbElmt(T1);
 	fori(T3, i){
 		TI(T3)[i] = TI(T1)[i] * TI(T2)[i];
 	}
@@ -222,32 +231,39 @@ TabInt KaliKons (TabInt Tin, ElType c)
 boolean IsEQ (TabInt T1, TabInt T2)
 /* Mengirimkan true jika T1 sama dengan T2 yaitu jika ukuran T1 = T2 dan semua elemennya sama */
 {
-	boolean ans;
-	ans = Neff(T1) == Neff(T2);
-	if (ans){
+	if (NbElmt(T1) == NbElmt(T2)){
 		fori(T1, i){
 			if (TI(T1)[i] != TI(T2)[i]){
-				ans = false;
+				return false;
 			}
 		}
+	} else {
+		return false;
 	}
-	return ans;
+	return true;
 }
 
 boolean IsLess (TabInt T1, TabInt T2)
 /* Mengirimkan true jika T1 < T2, */
 /* yaitu : sesuai dg analogi 'Ali' < Badu'; maka [0, 1] < [2, 3] */
 {
-	boolean ans;
-	ans = Neff(T1) <= Neff(T2);
-	if (Neff(T1) == Neff(T2)){
-		fori(T1, i){
-			if (TI(T1)[i] > TI(T2)[i]){
-				ans = false;
-			}
-		}
+	if (NbElmt(T2) == 0){
+		return false;
 	}
-	return ans;
+
+	if (NbElmt(T1) == 0){
+		return true;
+	}
+	if (TI(T1)[GetFirstIdx(T1)] < TI(T2)[GetFirstIdx(T2)]){
+		return true;
+	} else if (TI(T1)[GetFirstIdx(T1)] > TI(T2)[GetFirstIdx(T2)]){
+		return false;
+	} else {
+		int tmp = 0;
+		TabInt newT1; MakeEmpty(&newT1); CopyTab(T1, &newT1); DelEli(&newT1, 1, &tmp);
+		TabInt newT2; MakeEmpty(&newT2); CopyTab(T2, &newT2); DelEli(&newT2, 1, &tmp);
+		return IsLess(newT1, newT2);
+	}
 }
 
 /* ********** SEARCHING ********** */
@@ -374,6 +390,7 @@ void CopyTab (TabInt Tin, TabInt * Tout)
 /* F.S. Tout berisi salinan dari Tin (elemen dan ukuran identik) */
 /* Proses : Menyalin isi Tin ke Tout */
 {
+	Neff(*Tout) = NbElmt(Tin);
 	fori(Tin, i){
 		TI(*Tout)[i] = TI(Tin)[i];
 	}
@@ -435,6 +452,7 @@ void InsSortAsc (TabInt * T)
 		IdxType idx = i-1;
 		while(TI(*T)[idx] > TI(*T)[idx+1] && idx >= GetFirstIdx(*T)){
 			swap(TI(*T)[idx],TI(*T)[idx+1]);
+			idx--;
 		}
 	}
 }
@@ -463,7 +481,7 @@ void AddEli (TabInt * T, ElType X, IdxType i)
 		if (ii == i){
 			TI(*T)[ii] = X;
 		} else if (ii > i){
-			TI(*T)[ii] = TI(*T)[i-1];
+			TI(*T)[ii] = TI(*T)[ii-1];
 		}
 	}
 }
@@ -489,10 +507,8 @@ void DelEli (TabInt * T, IdxType i, ElType * X)
 /*          Kurangi elemen efektif tabel */
 {
 	Neff(*T)--;
-	fori(*T, ii){
-		if (ii >= i){
-			TI(*T)[ii] = TI(*T)[i+1];
-		}
+	for(int ii = i; ii <= GetLastIdx(*T); ++ii){
+		TI(*T)[ii] = TI(*T)[ii+1];
 	}
 }
 
@@ -565,7 +581,9 @@ void Add1Urut (TabInt * T, ElType X)
 /* Proses : Search tempat yang tepat sambil geser */
 /*          Insert X pada tempat yang tepat tersebut tanpa mengganggu keterurutan */
 {
-	AddEli(T, X, SearchUrut(*T, X));
+	if (!IsFull(*T)){
+		AddEli(T, X, SearchUrut(*T, X));
+	}
 }
 
 void Del1Urut (TabInt * T, ElType X)
