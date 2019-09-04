@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <conio.h>
+
 #include "array.h"
 #define fori(T, i) for(IdxType i = GetFirstIdx(T); i <= GetLastIdx(T); ++i)
 #define forii(T, i) for(IdxType i = GetLastIdx(T); i >= GetFirstIdx(T); --i)
@@ -75,11 +77,12 @@ int main(){
 		printf("What do you want to do?\n");
 		printf("Edit(1)\nDelElmt(2)\nAddElmt(3)\nFind(4)\n");
 		printf("SortAsc(5)\nSortDesc(6)\nDesc(7)\nCompare(8)\n");
-		printf("CheckSymmetry(9)\nQuit(0)?\n>>> ");
+		printf("CheckSymmetry(9)\nOperasiArrayTerurut(10)\n");
+		printf("Flip(11)\nAppend(12)\nPop(13)\nQuit(0)?\n>>> ");
 
 		intput(edit);
 		int choose; 
-		if (edit != 8 && edit != 0){
+		if (edit != 8 && edit != 0 && edit != 7){
 			printf("Array yang mana? (1/2)\n>>> "); intput(choose);
 		}
 
@@ -138,11 +141,8 @@ int main(){
 				MaxSortDesc(&T2);
 			}
 		} else if (edit == 7){
-			if (choose == 1){
-				descArray(T1);
-			} else {
-				descArray(T2);
-			}
+			descArray(T1);
+			descArray(T2);
 		} else if (edit == 8){
 			compareArray(T1, T2);
 		} else if (edit == 9){
@@ -151,8 +151,72 @@ int main(){
 			} else {
 				printf("Apakah simetris? "); print(IsSimetris(T2));
 			}
+		} else if (edit == 10){
+			printf("Add(1)\nDel(2)\nMaxMin(3)\nSearch(4)\n>>> ");
+			int c; intput(c);
+			if (c == 1){
+				printf("format: angka_baru\n");
+				int x; intput(x);
+				if (choose == 1){
+					Add1Urut(&T1,x);
+				} else {
+					Add1Urut(&T2,x);
+				}
+			} else if (c == 2){
+				printf("format: angka_yang_didelete\n");
+				int x; intput(x);
+				if (choose == 1){
+					Del1Urut(&T1,x);
+				} else {
+					Del1Urut(&T2,x);
+				}
+			} else if (c == 3){
+				int mx, mn;
+				if (choose == 1){
+					printArray(T1);
+					MaxMinUrut(T1,&mx,&mn);
+				} else {
+					printArray(T2);
+					MaxMinUrut(T2,&mx,&mn);
+				}
+				printf("Nilai maks: "); print(mx);
+				printf("Nilai min: "); print(mn);
+			} else if (c == 4){
+				printf("format: angka_yang_dicari\n");
+				int x; intput(x);
+				if (choose == 1){
+					print(SearchUrut(T1,x));
+				} else {
+					print(SearchUrut(T2,x));
+				}
+			}
+		} else if (edit == 11){
+			if (choose == 1){
+				T1 = InverseTab(T1);
+			} else {
+				T2 = InverseTab(T2);
+			}
+		} else if (edit == 12){
+			printf("format: angka_baru\n");
+			int x; intput(x);
+			if (choose == 1){
+				AddAsLastEl(&T1, x);
+			} else {
+				AddAsLastEl(&T2, x);
+			}
+		} else if (edit == 13){
+			int x = 0;
+			if (choose == 1){
+				DelLastEl(&T1, &x);
+			} else {
+				DelLastEl(&T2, &x);
+			}
 		}
 		ENDL;
+		printf("array 1:"); printArray(T1);
+		printf("array 2:"); printArray(T2);
+		printf("Press Any Key to Continue");
+		getch(); ENDL;
 	} while(edit != 0);
 
 	printf("Array terakhir:\n");

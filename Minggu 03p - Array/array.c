@@ -152,8 +152,12 @@ void TulisIsi (TabInt T)
    [4]50
 */
 {
-	fori(T, i){
-		printf("[%d]%d\n", i, TI(T)[i]);
+	if (IsEmpty(T)){
+		printf("Tabel kosong\n"); //17
+	} else {
+		fori(T, i){
+			printf("[%d]%d\n", i, TI(T)[i]);
+		}
 	}
 }
 
@@ -243,7 +247,7 @@ boolean IsEQ (TabInt T1, TabInt T2)
 	return true;
 }
 
-boolean IsLess (TabInt T1, TabInt T2)
+boolean IsLess (TabInt T1, TabInt T2) // 48
 /* Mengirimkan true jika T1 < T2, */
 /* yaitu : sesuai dg analogi 'Ali' < Badu'; maka [0, 1] < [2, 3] */
 {
@@ -385,7 +389,7 @@ IdxType IdxMinTab (TabInt T)
 }
 
 /* ********** OPERASI LAIN ********** */
-void CopyTab (TabInt Tin, TabInt * Tout)
+void CopyTab (TabInt Tin, TabInt * Tout) // 87
 /* I.S. Tin terdefinisi, Tout sembarang */
 /* F.S. Tout berisi salinan dari Tin (elemen dan ukuran identik) */
 /* Proses : Menyalin isi Tin ke Tout */
@@ -426,7 +430,7 @@ boolean IsSimetris (TabInt T)
 }
 
 /* ********** SORTING ********** */
-void MaxSortDesc (TabInt * T)
+void MaxSortDesc (TabInt * T) // 98
 /* I.S. T boleh kosong */
 /* F.S. T elemennya terurut menurun dengan Maximum Sort */
 /* Proses : mengurutkan T sehingga elemennya menurun/mengecil */
@@ -442,7 +446,7 @@ void MaxSortDesc (TabInt * T)
 	CopyTab(T2, T);
 }
 
-void InsSortAsc (TabInt * T)
+void InsSortAsc (TabInt * T) // 102
 /* I.S. T boleh kosong */
 /* F.S. T elemennya terurut menaik dengan Insertion Sort */
 /* Proses : mengurutkan T sehingga elemennya menaik/membesar */
@@ -459,7 +463,7 @@ void InsSortAsc (TabInt * T)
 
 /* ********** MENAMBAH ELEMEN ********** */
 /* *** Menambahkan elemen terakhir *** */
-void AddAsLastEl (TabInt * T, ElType X)
+void AddAsLastEl (TabInt * T, ElType X) //108-110
 /* Proses: Menambahkan X sebagai elemen terakhir tabel */
 /* I.S. Tabel T boleh kosong, tetapi tidak penuh */
 /* F.S. X adalah elemen terakhir T yang baru */
@@ -467,7 +471,7 @@ void AddAsLastEl (TabInt * T, ElType X)
 	TI(*T)[++Neff(*T)] = X;
 }
 
-void AddEli (TabInt * T, ElType X, IdxType i)
+void AddEli (TabInt * T, ElType X, IdxType i) // 111-113
 /* Menambahkan X sebagai elemen ke-i tabel tanpa mengganggu kontiguitas 
    terhadap elemen yang sudah ada */
 /* I.S. Tabel tidak kosong dan tidak penuh */
@@ -513,7 +517,7 @@ void DelEli (TabInt * T, IdxType i, ElType * X)
 }
 
 /* ********** TABEL DGN ELEMEN UNIK (SETIAP ELEMEN HANYA MUNCUL 1 KALI) ********** */
-void AddElUnik (TabInt * T, ElType X)
+void AddElUnik (TabInt * T, ElType X) //114-117
 /* Menambahkan X sebagai elemen terakhir tabel, pada tabel dengan elemen unik */
 /* I.S. Tabel T boleh kosong, tetapi tidak penuh */
 /*      dan semua elemennya bernilai unik, tidak terurut */
@@ -525,14 +529,14 @@ void AddElUnik (TabInt * T, ElType X)
 /*          Kemudian tambahkan elemen jika belum ada */
 {
 	if (!SearchSentinel(*T, X)){
-		AddAsLastEl(T, X);
+		AddAsLastEl(T, X); // 114,116
 	} else {
-		printf("nilai sudah ada\n");
+		printf("nilai sudah ada\n"); // 115,117
 	}
 }
 
 /* ********** TABEL DGN ELEMEN TERURUT MEMBESAR ********** */
-IdxType SearchUrut (TabInt T, ElType X)
+IdxType SearchUrut (TabInt T, ElType X) //118-122
 /* Prekondisi: Tabel T boleh kosong. Jika tidak kosong, elemen terurut membesar. */
 /* Mengirimkan indeks di mana harga X dengan indeks terkecil diketemukan */
 /* Mengirimkan IdxUndef jika tidak ada elemen tabel bernilai X */
@@ -571,7 +575,7 @@ void MaxMinUrut (TabInt T, ElType * Max, ElType * Min)
 	*Min = MinUrut(T);
 }
 
-void Add1Urut (TabInt * T, ElType X)
+void Add1Urut (TabInt * T, ElType X) // 128-132
 /* Menambahkan X tanpa mengganggu keterurutan nilai dalam tabel */
 /* Nilai dalam tabel tidak harus unik. */
 /* I.S. Tabel T boleh kosong, boleh penuh. */
@@ -581,12 +585,23 @@ void Add1Urut (TabInt * T, ElType X)
 /* Proses : Search tempat yang tepat sambil geser */
 /*          Insert X pada tempat yang tepat tersebut tanpa mengganggu keterurutan */
 {
-	if (!IsFull(*T)){
-		AddEli(T, X, SearchUrut(*T, X));
+	if (IsEmpty(*T)){
+		AddEli(T, X, 1);
+		return;
+	}
+	if(!IsFull(*T)){
+		TI(*T)[NbElmt(*T)+1] = X;
+		fori(*T, i){
+			if ((TI(*T)[i] <= X) && (X <= TI(*T)[i+1])){
+				AddEli(T, X, i+1);
+				return;
+			}
+		}
+		AddEli(T, X, 1);
 	}
 }
 
-void Del1Urut (TabInt * T, ElType X)
+void Del1Urut (TabInt * T, ElType X) // 133-134
 /* Menghapus X yang pertama kali (pada indeks terkecil) yang ditemukan */
 /* I.S. Tabel tidak kosong */
 /* F.S. Jika ada elemen tabel bernilai X , */
@@ -597,7 +612,7 @@ void Del1Urut (TabInt * T, ElType X)
 /*          Delete jika ada. */
 {
 	IdxType idx = SearchUrut(*T, X);
-	if (idx != -9999){
+	if (idx != IdxUndef){ // 134
 		DelEli(T, idx, &X);
 	}
 }
