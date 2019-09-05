@@ -16,6 +16,22 @@
 #define floatput(a) scanf("%f", &a)
 #define print(a) printf("%d\n", a)
 #define swapTab(a, b) {TabInt tmp; CopyTab(b, &tmp); CopyTab(a, &b); CopyTab(tmp, &a);}
+#define abs(a) a<0?-a:a 
+#define selisih(a, b) abs(a-b)
+
+ElType Head(TabInt T){
+	return Elmt(T, GetFirstIdx(T));
+}
+
+TabInt Tail(TabInt T){
+	int tmp = 0;
+	TabInt newT;
+	MakeEmpty(&newT);
+	CopyTab(T, &newT);
+	DelEli(&newT, 1, &tmp);
+	return newT;
+}
+
 
 /* ********** KONSTRUKTOR ********** */
 /* Konstruktor : create tabel kosong  */
@@ -251,23 +267,11 @@ boolean IsLess (TabInt T1, TabInt T2) // 48
 /* Mengirimkan true jika T1 < T2, */
 /* yaitu : sesuai dg analogi 'Ali' < Badu'; maka [0, 1] < [2, 3] */
 {
-	if (NbElmt(T2) == 0){
-		return false;
-	}
+	if (IsEmpty(T2)) return false;
+	if (IsEmpty(T1)) return true;
 
-	if (NbElmt(T1) == 0){
-		return true;
-	}
-	if (TI(T1)[GetFirstIdx(T1)] < TI(T2)[GetFirstIdx(T2)]){
-		return true;
-	} else if (TI(T1)[GetFirstIdx(T1)] > TI(T2)[GetFirstIdx(T2)]){
-		return false;
-	} else {
-		int tmp = 0;
-		TabInt newT1; MakeEmpty(&newT1); CopyTab(T1, &newT1); DelEli(&newT1, 1, &tmp);
-		TabInt newT2; MakeEmpty(&newT2); CopyTab(T2, &newT2); DelEli(&newT2, 1, &tmp);
-		return IsLess(newT1, newT2);
-	}
+	if (Head(T1) == Head(T2)) return IsLess(Tail(T1), Tail(T2));
+	else return (Head(T1) < Head(T2));
 }
 
 /* ********** SEARCHING ********** */
@@ -279,12 +283,13 @@ IdxType Search1 (TabInt T, ElType X)
 /* Menghasilkan indeks tak terdefinisi (IdxUndef) jika tabel T kosong */
 /* Memakai skema search TANPA boolean */
 {
-	fori(T, i){
-		if (TI(T)[i] == X){
-			return i;
-		}
-	}
-	return IdxUndef;
+	// fori(T, i){
+	// 	if (TI(T)[i] == X){
+	// 		return i;
+	// 	}
+	// }
+	// return IdxUndef;
+	return Search2(T,X);
 }
 
 IdxType Search2 (TabInt T, ElType X)
@@ -452,13 +457,15 @@ void InsSortAsc (TabInt * T) // 102
 /* Proses : mengurutkan T sehingga elemennya menaik/membesar */
 /*          tanpa menggunakan tabel kerja */
 {
-	fori(*T, i){
-		IdxType idx = i-1;
-		while(TI(*T)[idx] > TI(*T)[idx+1] && idx >= GetFirstIdx(*T)){
-			swap(TI(*T)[idx],TI(*T)[idx+1]);
-			idx--;
-		}
-	}
+	// fori(*T, i){
+	// 	IdxType idx = i-1;
+	// 	while(TI(*T)[idx] > TI(*T)[idx+1] && idx >= GetFirstIdx(*T)){
+	// 		swap(TI(*T)[idx],TI(*T)[idx+1]);
+	// 		idx--;
+	// 	}
+	// }
+	MaxSortDesc(T);
+	*T = InverseTab(*T);
 }
 
 /* ********** MENAMBAH ELEMEN ********** */
@@ -498,7 +505,7 @@ void DelLastEl (TabInt * T, ElType * X)
 /*      Banyaknya elemen tabel berkurang satu */
 /*      Tabel T mungkin menjadi kosong */
 {
-	Neff(*T)--;
+	*X = TI(*T)[Neff(*T)--];
 }
 
 void DelEli (TabInt * T, IdxType i, ElType * X)
@@ -510,6 +517,7 @@ void DelEli (TabInt * T, IdxType i, ElType * X)
 /* Proses : Geser elemen ke-i+1 s.d. elemen terakhir */
 /*          Kurangi elemen efektif tabel */
 {
+	*X = TI(*T)[i];
 	Neff(*T)--;
 	for(int ii = i; ii <= GetLastIdx(*T); ++ii){
 		TI(*T)[ii] = TI(*T)[ii+1];
@@ -528,7 +536,7 @@ void AddElUnik (TabInt * T, ElType X) //114-117
 /* Proses : Cek keunikan dengan sequential search dengan sentinel */
 /*          Kemudian tambahkan elemen jika belum ada */
 {
-	if (!SearchSentinel(*T, X)){
+	if (!SearchB(*T, X)){
 		AddAsLastEl(T, X); // 114,116
 	} else {
 		printf("nilai sudah ada\n"); // 115,117
