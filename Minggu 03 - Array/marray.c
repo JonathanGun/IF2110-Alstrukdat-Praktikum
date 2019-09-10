@@ -42,28 +42,12 @@ void descArray(TabInt T, int X){
 	TulisIsiTab(T); ENDL;
 	print(NbOccX(T, X));
 	int idx = Search1(T, X);
-	if (idx != IdxUndef){
-		print(idx);
-	} else {
-		printf("%d tidak ada\n", X);
-	}
+	if (idx != IdxUndef) print(idx);
+	else printf("%d tidak ada\n", X);
 
-	int mx = ValMax(T), mn = ValMin(T);
-	if (X == mx){
-		printf("maksimum\n");
-	}
-	if (X == mn){
-		printf("minimum\n");
-	}
-	
-	TabInt sortedT;
-	CopyTab(T, &sortedT);
-	InsSortAsc(&sortedT);
-	int med = Elmt(sortedT, ceildiv(NbElmt(sortedT)));
-
-	if (X == med){
-		printf("median\n");
-	}
+	if (X == ValMax(T)) printf("maksimum\n");
+	if (X == ValMin(T)) printf("minimum\n");
+	if (X == Elmt(T, ceildiv(NbElmt(T)))) printf("median\n");
 }
 
 // DRIVER
