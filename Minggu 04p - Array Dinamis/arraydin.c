@@ -102,11 +102,11 @@ TabInt PlusMinusTab(TabInt T1, TabInt T2, boolean plus){
 
 boolean IsEQ(TabInt T1, TabInt T2)  {return (IsEmpty(T1) && IsEmpty(T2))?1:((Neff(T1) == Neff(T2)) && (Head(T1) == Head(T2)) && IsEQ(Tail(T1), Tail(T2)));}
 IdxType Search1(TabInt T, ElType X){
-  if (IsEmpty(T)) return IdxUndef;
-  if (Head(T) == X) return 1;
-  IdxType idx = Search1(Tail(T),X);
-  if (idx != IdxUndef) return 1+idx;
-  return IdxUndef;
+  // if (IsEmpty(T)) return IdxUndef;
+  // if (Head(T) == X) return 1;
+  // IdxType idx = Search1(Tail(T),X);
+  // if (idx != IdxUndef) return 1+idx;
+  // return IdxUndef;
 }
 
 boolean SearchB(TabInt T, ElType X) {return IsEmpty(T)?0: ((Head(T) == X) || SearchB(Tail(T), X));}

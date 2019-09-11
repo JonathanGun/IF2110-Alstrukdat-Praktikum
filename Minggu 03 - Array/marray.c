@@ -23,18 +23,12 @@
 
 int NbOccX(TabInt T, ElType X){
 	int ans = 0;
-	fori(T, i){
-		if (Elmt(T,i) == X){
-			ans++;
-		}
-	}
+	fori(T, i) if (Elmt(T,i) == X) ans++;
 	return ans;
 }
 
 int ceildiv(int x){
-	if (x%2 == 0){
-		return x/2;
-	}
+	if (x%2 == 0) return x/2;
 	return (x/2)+1;
 }
 
@@ -47,6 +41,7 @@ void descArray(TabInt T, int X){
 
 	if (X == ValMax(T)) printf("maksimum\n");
 	if (X == ValMin(T)) printf("minimum\n");
+	InsSortAsc(&T);
 	if (X == Elmt(T, ceildiv(NbElmt(T)))) printf("median\n");
 }
 
