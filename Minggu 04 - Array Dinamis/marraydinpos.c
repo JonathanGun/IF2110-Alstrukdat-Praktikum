@@ -56,6 +56,8 @@ int main(){
     }
     printTab(T);
   }
+  Sort(&T,0);
+  printTab(T);
 	
 	return 0;
 }

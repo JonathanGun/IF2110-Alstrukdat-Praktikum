@@ -1,10 +1,12 @@
-// Nama/NIM     : Jonathan Yudi Gunawan/13518084
-// Hari, Tanggal  : Kamis, 12 September 2019
-// Topik/Deskripsi  : Array Din/array dan din dun dun
+/* MODUL TABEL INTEGER */
+/* Berisi definisi dan semua primitif pemrosesan tabel integer */
+/* Penempatan elemen selalu rapat kiri */
+/* Versi III : dengan banyaknya elemen didefinisikan secara implisit,
+   memori tabel dinamik */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "arraydin.h"
+#include "arraydinpos.h"
 
 #define max(a, b) a>b?a:b
 #define min(a, b) a<b?a:b
@@ -23,6 +25,13 @@
 #define fori1(T, i)   for(IdxType i = GetFirstIdx(T)+1; i <= GetLastIdx(T);    ++i)
 #define forii(T, i)   for(IdxType i = GetLastIdx(T);    i >= GetFirstIdx(T);   --i)
 #define forii1(T, i)  for(IdxType i = GetLastIdx(T);    i >= GetFirstIdx(T)+1; --i)
+#define formax(T, i)  for(IdxType i = GetFirstIdx(T);   i <= MaxElement(T);    ++i)
+#define forn(T, i, n)    for(IdxType i = GetFirstIdx(T);   i <= n;    ++i)
+
+int Neff(TabInt T){
+  formax(T, i) if (Elmt(T, i) == ValUndef) return i-1;
+  return MaxElement(T);
+}
 
 TabInt InverseTab (TabInt T){
   TabInt T2; MakeEmpty(&T2, MaxElement(T)); CopyTab(T, &T2);
@@ -31,7 +40,8 @@ TabInt InverseTab (TabInt T){
 }
 
 void DelEli (TabInt * T, IdxType i, ElType * X){
-  *X = Elmt(*T,Neff(*T)--);
+  *X = Elmt(*T,NbElmt(*T));
+  Elmt(*T, NbElmt(*T)) = ValUndef;
   for(int ii = i; ii <= GetLastIdx(*T); ++ii) Elmt(*T,ii) = Elmt(*T,ii+1);
 }
 
@@ -47,33 +57,39 @@ TabInt Tail(TabInt T){
 ElType ValMax(TabInt T) {return (NbElmt(T) == 1)?Head(T): max(Head(T), ValMax(Tail(T)));}
 ElType ValMin(TabInt T) {return (NbElmt(T) == 1)?Head(T): min(Head(T), ValMin(Tail(T)));}
 
+/* ********** KONSTRUKTOR ********** */
+/* Konstruktor : create tabel kosong  */
+void MakeEmpty(TabInt *T, int maxel){
+  TI(*T) = (ElType *) malloc (sizeof(int) * (maxel+1));
+  MaxEl(*T) = maxel;
+  formax(*T, i) Elmt(*T, i) = ValUndef;
+}
+
+void Dealokasi(TabInt *T){
+  MaxEl(*T) = 0;
+  free(TI(*T)); 
+}
+
+/* ********** SELEKTOR (TAMBAHAN) ********** */
 int NbElmt(TabInt T)                      {return Neff(T);}
 int MaxElement(TabInt T)                  {return MaxEl(T);}
 IdxType GetFirstIdx(TabInt T)             {return IdxMin;}
 IdxType GetLastIdx(TabInt T)              {return NbElmt(T);}
 boolean IsIdxValid(TabInt T, IdxType i)   {return ((GetFirstIdx(T) <= i) && (i <= MaxElement(T)));}
 boolean IsIdxEff(TabInt T, IdxType i)     {return ((GetFirstIdx(T) <= i) && (i <= GetLastIdx(T)));}
+
+/* ********** TEST KOSONG/PENUH ********** */
 boolean IsEmpty(TabInt T)                 {return (!NbElmt(T));}
 boolean IsFull(TabInt T)                  {return (NbElmt(T) == MaxElement(T));}
 
-void MakeEmpty(TabInt *T, int maxel){
-  MaxEl(*T) = maxel; Neff(*T) = 0;
-  TI(*T) = (ElType *) malloc (sizeof(int) * (maxel+1));
-}
-
-void Dealokasi(TabInt *T){
-  MaxEl(*T) = 0; Neff(*T) = 0;
-  free(TI(*T)); 
-}
-
+/* ********** BACA dan TULIS dengan INPUT/OUTPUT device ********** */
 void BacaIsi(TabInt *T){
   int n;
   do intput(n); while ((n < 0) || (n > MaxElement(*T)));
 
   if (n){
-    Neff(*T) = n;
     ElType tmp;
-    fori(*T, i){
+    forn(*T, i, n){
       intput(tmp);
       Elmt(*T, i) = tmp;
     }
@@ -89,17 +105,19 @@ void TulisIsiTab(TabInt T){
   printf("]");
 }
 
-
+/* ********** OPERATOR ARITMATIKA ********** */
+/* *** Aritmatika tabel : Penjumlahan, pengurangan, perkalian, ... *** */
 TabInt PlusMinusTab(TabInt T1, TabInt T2, boolean plus){
-  TabInt T3; MakeEmpty(&T3, NbElmt(T1));
-  Neff(T3) = NbElmt(T1);
-  fori(T3, i)
-    if (plus) Elmt(T3,i) = Elmt(T1,i) + Elmt(T2,i);
-    else Elmt(T3,i) = Elmt(T1,i) - Elmt(T2,i);
-  return T3;
+  fori(T1, i)
+    if (plus) Elmt(T1,i) += Elmt(T2,i);
+    else Elmt(T1,i) -= Elmt(T2,i);
+  return T1;
 }
 
 
+/* ********** OPERATOR RELASIONAL ********** */
+/* *** Operasi pembandingan tabel : < =, > *** */
+/* ********** SEARCHING ********** */
 boolean IsEQ(TabInt T1, TabInt T2)  {return (IsEmpty(T1) && IsEmpty(T2))?1:((Neff(T1) == Neff(T2)) && (Head(T1) == Head(T2)) && IsEQ(Tail(T1), Tail(T2)));}
 IdxType Search1(TabInt T, ElType X){
   if (IsEmpty(T)) return IdxUndef;
@@ -108,16 +126,18 @@ IdxType Search1(TabInt T, ElType X){
   if (idx != IdxUndef) return 1+idx;
   return IdxUndef;
 }
-
 boolean SearchB(TabInt T, ElType X) {return IsEmpty(T)?0: ((Head(T) == X) || SearchB(Tail(T), X));}
+
+/* ********** NILAI EKSTREM ********** */
 void MaxMin(TabInt T, ElType *Max, ElType *Min){
   *Max = ValMax(T);
   *Min = ValMin(T);
 }
 
+/* ********** OPERASI LAIN ********** */
 void CopyTab(TabInt Tin, TabInt *Tout){
   MakeEmpty(Tout, NbElmt(Tin));
-  Neff(*Tout) = NbElmt(Tin);
+  // ChangeNeff(*Tout, NbElmt(Tin));
   fori(Tin,i) Elmt(*Tout,i) = Elmt(Tin,i);
 }
 
@@ -125,17 +145,23 @@ ElType SumTab(TabInt T)           {return IsEmpty(T)?0:(Head(T) + SumTab(Tail(T)
 int CountX(TabInt T, ElType X)    {return IsEmpty(T)?0:((Head(T) == X) + (CountX(Tail(T),X)));}
 boolean IsAllGenap(TabInt T)      {return IsEmpty(T)?0: (Neff(T) == 1 && (!(Head(T)%2)))?1: ((!(Head(T)%2)) && IsAllGenap(Tail(T)));}
 
+/* ********** SORTING ********** */
 void Sort(TabInt *T, boolean asc){
   fori1(*T,i) fori1(*T,j) if (Elmt(*T,j) < Elmt(*T,j-1)) swap(Elmt(*T,j), Elmt(*T,j-1));  
   if (!asc) *T = InverseTab(*T);
 }
 
-void AddAsLastEl(TabInt *T, ElType X) {Elmt(*T,++Neff(*T)) = X;}
+/* ********** MENAMBAH DAN MENGHAPUS ELEMEN DI AKHIR ********** */
+void AddAsLastEl(TabInt *T, ElType X) {
+  // ChangeNeff(*T, Neff(*T)+1);
+  Elmt(*T,Neff(*T)+1) = X;
+}
 void DelLastEl(TabInt *T, ElType *X) {DelEli(T,NbElmt(*T),X);}
 
+/* ********* MENGUBAH UKURAN ARRAY ********* */
 void GrowTab(TabInt *T, int num){
   MaxEl(*T) += num;
-  TI(*T) = (ElType *) realloc (sizeof(int) * (MaxEl(*T)));
+  TI(*T) = (ElType *) realloc (TI(*T), sizeof(int) * (MaxEl(*T)));
 }
 
 void ShrinkTab(TabInt *T, int num) {GrowTab(T, -num);}
