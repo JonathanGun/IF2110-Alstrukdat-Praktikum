@@ -56,13 +56,13 @@ indeks GetFirstIdxKol (MATRIKS M)
 indeks GetLastIdxBrs (MATRIKS M)
 /* Mengirimkan indeks baris terbesar M */
 {
-	return BrsMax;
+	return NBrsEff(M);
 }
 
 indeks GetLastIdxKol (MATRIKS M)
 /* Mengirimkan indeks kolom terbesar M */
 {
-	return KolMax;
+	return NKolEff(M);
 }
 
 boolean IsIdxEff (MATRIKS M, indeks i, indeks j)
@@ -120,8 +120,10 @@ void TulisMATRIKS (MATRIKS M)
 {
 	forn(i, NBrsEff(M)){
 		forn(j, NKolEff(M)){
-			prints(Elmt(M, i, j));
-		} ENDL;
+			if (j >= NKolEff(M)) print(Elmt(M, i, j));
+			else prints(Elmt(M, i, j));
+		}
+		if (i != NBrsEff(M)) ENDL;
 	}
 }
 
@@ -146,18 +148,22 @@ MATRIKS KaliMATRIKS (MATRIKS M1, MATRIKS M2)
 /* Prekondisi : Ukuran kolom efektif M1 = ukuran baris efektif M2 */
 /* Mengirim hasil perkalian matriks: salinan M1 * M2 */
 {
-	forall(M1, i, j){
-		forn(k, NKolEff(M2)){
-			Elmt(M1, i, j) += Elmt(M2, i, k);
+	MATRIKS M3; MakeMATRIKS(NBrsEff(M1), NKolEff(M2), &M3);
+	forn(i, NBrsEff(M1)){
+		forn(j, NKolEff(M2)){
+			Elmt(M3, i, j) = 0;
+			forn(k, NBrsEff(M2)){
+				Elmt(M3, i, j) += Elmt(M1, i, k)*Elmt(M2, k, j);
+			}
 		}
 	}
-	return M1;
+	return M3;
 }
 
 MATRIKS KaliKons (MATRIKS M, ElType X)
 /* Mengirim hasil perkalian setiap elemen M dengan X */
 {
-	forall(M, i, j) Elmt(M, i, j) *= X;
+	PKaliKons(&M, X);
 	return M;
 }
 
@@ -175,6 +181,8 @@ boolean EQ (MATRIKS M1, MATRIKS M2)
 /* Juga merupakan strong EQ karena GetFirstIdxBrs(M1) = GetFirstIdxBrs(M2)
    dan GetLastIdxKol(M1) = GetLastIdxKol(M2) */
 {
+	if (NBrsEff(M1) != NBrsEff(M2)) return false;
+	if (NKolEff(M1) != NKolEff(M2)) return false;
 	forn(i, NBrsEff(M1)){
 		forn(j, NKolEff(M1)){
 			if (Elmt(M1, i, j) != Elmt(M2, i, j)) return false;
@@ -199,14 +207,14 @@ boolean EQSize (MATRIKS M1, MATRIKS M2)
 int NBElmt (MATRIKS M)
 /* Mengirimkan banyaknya elemen M */
 {
-	return NBrsEff(M)*NKolEff(M);
+	return (NBrsEff(M)*NKolEff(M));
 }
 
 /* ********** KELOMPOK TEST TERHADAP MATRIKS ********** */
 boolean IsBujurSangkar (MATRIKS M)
 /* Mengirimkan true jika M adalah matriks dg ukuran baris dan kolom sama */
 {
-	return NBrsEff(M) == NKolEff(M);
+	return (NBrsEff(M) == NKolEff(M));
 }
 
 boolean IsSimetri (MATRIKS M)
@@ -242,7 +250,7 @@ boolean IsSparse (MATRIKS M)
 MATRIKS Inverse1 (MATRIKS M)
 /* Menghasilkan salinan M dengan setiap elemen "di-invers", yaitu dinegasikan (dikalikan -1) */
 {
-	forall(M, i, j) Elmt(M, i, j) *= -1;
+	PInverse1(&M);
 	return M;
 }
 
@@ -259,19 +267,22 @@ MATRIKS reduce(MATRIKS m, int rx, int cx){
     return newm;
 }
 
-#define mypow(n) n%2?-1:1;
+int mypow(int n) {
+	if (n%2==0) return 1;
+	return -1;
+}
 
 float Determinan (MATRIKS M)
 /* Prekondisi: IsBujurSangkar(M) */
 /* Menghitung nilai determinan M */
 {
 	// Basis
-    if (NBrsEff(M) == 1) return Elmt(M,0,0);
+    if (NBrsEff(M) == GetFirstIdxBrs(M)) return Elmt(M,GetFirstIdxBrs(M),GetFirstIdxBrs(M));
 
     // Rekursi
     float ans = 0;
-    for(int c = 1; c <= NKolEff(M); c++){
-        ans += Elmt(M,1,c)*Determinan(reduce(M, 1, c))*mypow(c+1);
+    for(int c = GetFirstIdxKol(M); c <= NKolEff(M); c++){
+    	ans += Elmt(M,GetFirstIdxBrs(M),c)*Determinan(reduce(M, GetFirstIdxBrs(M), c))*mypow(c+1);
     }
     return ans;
 }
@@ -287,11 +298,25 @@ void Transpose (MATRIKS * M)
 /* I.S. M terdefinisi dan IsBujursangkar(M) */
 /* F.S. M "di-transpose", yaitu setiap elemen M(i,j) ditukar nilainya dengan elemen M(j,i) */
 {
-	for(int i = GetFirstIdxBrs(*M); i < GetLastIdxBrs(*M); i++){
-		for(int j = i+1; j < GetLastIdxKol(*M); j++){
+	for(int i = GetFirstIdxBrs(*M); i <= GetLastIdxBrs(*M); i++){
+		for(int j = i+1; j <= GetLastIdxKol(*M); j++){
 			swap(Elmt(*M, i, j), Elmt(*M, j, i));
 		}
 	}
 }
 
-// int main() {return 0;}
+// int main() {
+// 	MATRIKS M;
+// 	int nb, nk; intput2(nb, nk);
+// 	BacaMATRIKS(&M, nb, nk);
+// 	TulisMATRIKS(M);
+// 	// print(IsSimetri(M));
+// 	// TulisMATRIKS(KaliMATRIKS(M,M));
+// 	// printf("%f", Determinan(M)); ENDL;
+// 	// PKaliKons(&M, 10);
+// 	MATRIKS M1; CopyMATRIKS(M, &M1);
+// 	M = TambahMATRIKS(M, KaliKons(M, 10));
+// 	TulisMATRIKS(M1);
+// 	TulisMATRIKS(M);
+// 	return 0;
+// }
