@@ -41,7 +41,6 @@ int main(){
 		if(IsIdxValid(r, c)) Elmt(C, i, j) += Elmt(B, r, c)*Elmt(A, ii, jj);
 	}
 	TulisMATRIKS(C);
-	ENDL;
 
 	return 0;
 }
