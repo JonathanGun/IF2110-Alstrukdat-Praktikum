@@ -18,8 +18,8 @@
 #define prints(a)     printf("%d ", a)
 #define ENDL          printf("\n")
 
-#define formax(T, i)  for(indeks i = 1;			    i <= T.BrsMax;		   ++i)
-#define forn(i, n)    for(indeks i = 1;   				i <= n;                ++i)
+#define formax(M, i)  for(indeks i = 1;	i <= M.BrsMax; ++i)
+#define forn(i, n)    for(indeks i = 1; i <= n;        ++i)
 #define forall(M,i,j) forn(i, NBrsEff(M)) forn(j, NKolEff(M))
 
 /* ********** DEFINISI PROTOTIPE PRIMITIF ********** */
