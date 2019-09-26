@@ -41,10 +41,11 @@ void STARTTOKEN()
           CC karakter pertama sesudah karakter terakhir Token */
 {
   START();
+  IgnoreBlank();
   if(CC == MARK) EndToken = true;
   else{
-    IgnoreBlank();
-    ADVTOKEN();
+    EndToken = false;
+    SalinToken();
   }
 }
 
@@ -55,9 +56,12 @@ void ADVTOKEN()
           Jika CC = MARK, maka EndToken = true
    Proses : Akuisisi kata menggunakan procedure SalinKata */
 {
-  SalinToken();
   IgnoreBlank();
   if(CC == MARK) EndToken = true;
+  else{
+    SalinToken();
+    IgnoreBlank();
+  } 
 }
 
 void SalinToken()
@@ -68,15 +72,15 @@ void SalinToken()
           CC adalah karakter sesudah karakter terakhir yang diakuisisi.
           Jika panjang kata melebihi NMax, maka sisa kata "dipotong" */
 {
-  if('0' <= CC && CC <= '9'){
+  CToken.val = 0;
+  if(!(CC == '/' || CC == '*' || CC == '+' || CC == '-' || CC == '^')){
     CToken.tkn = 'b';
-    CToken.val = 0;
-    while('0' <= CC && CC <= '9'){
+    do{
       CToken.val *= 10;
-      CToken.val += (CC - '0');
+      CToken.val += ((int)CC - 48);
       ADV();
-    }
-  } else if(!(CC == BLANK || CC == MARK)){
+    }while(CC!=MARK && CC!=BLANK);
+  } else if(!((CC == BLANK) || (CC == MARK))){
     CToken.tkn = CC;
     CToken.val = -1;
     ADV();

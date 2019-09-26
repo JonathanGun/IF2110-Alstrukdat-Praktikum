@@ -19,7 +19,7 @@
 #define forall(i) for(int i = 1; i <= CKata.Length; i++)
 #define printkata() forall(i) print(CKata.TabKata[i])
 
-boolean EndKata;
+boolean EndKata = false;
 Kata CKata;
 
 void IgnoreBlank()

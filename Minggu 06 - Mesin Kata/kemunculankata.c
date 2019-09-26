@@ -56,7 +56,7 @@ int main(){
 		for(int start = 1; start <= CKata.Length-Search.Length+1; start++){
 			Salin(&Cur, CKata, start, start+Search.Length-1);
 			if(Equal(Cur, Search)) {
-				cnt++;
+				cnt = cnt+1;
 			}
 		}
 	}
