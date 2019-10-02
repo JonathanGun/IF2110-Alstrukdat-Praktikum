@@ -51,14 +51,15 @@ int main(){
 	STARTKATA();
 	Salin(&Search, CKata, 1, CKata.Length);
 	int cnt = 0;
+	ADVKATA();
 	while(!EndKata){
-		ADVKATA();
 		for(int start = 1; start <= CKata.Length-Search.Length+1; start++){
 			Salin(&Cur, CKata, start, start+Search.Length-1);
 			if(Equal(Cur, Search)) {
 				cnt = cnt+1;
 			}
 		}
+		ADVKATA();
 	}
 	println(cnt);
 

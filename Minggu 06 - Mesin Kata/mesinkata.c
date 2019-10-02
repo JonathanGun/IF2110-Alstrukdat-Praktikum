@@ -39,7 +39,6 @@ void STARTKATA()
   START();
   IgnoreBlank();
   ADVKATA();
-  if(CC == MARK) EndKata = true;
 }
 
 void ADVKATA()
@@ -49,9 +48,11 @@ void ADVKATA()
           Jika CC = MARK, EndKata = true.
    Proses : Akuisisi kata menggunakan procedure SalinKata */
 {
-  SalinKata();
-  IgnoreBlank();
   if(CC == MARK) EndKata = true;
+  else {
+    SalinKata();
+    IgnoreBlank();
+  }
 }
 
 void SalinKata()
