@@ -84,12 +84,8 @@ void Add (PrioQueueChar * Q, infotype X)
 	int i = Head(*Q);
 	boolean sudah = false;
 	while(i != Tail(*Q)){
-		if(!sudah && (Elmt(*Q, i).prio > X.prio)){
-			sudah = true;
-		}
-		if (sudah){
-			swap(Elmt(*Q, i), X);
-		}
+		if(!sudah && (Elmt(*Q, i).prio > X.prio)) sudah = true;
+		if (sudah) swap(Elmt(*Q, i), X);
 		if(i == MaxEl(*Q)) i = 1;
 		else(i++);
 	}
