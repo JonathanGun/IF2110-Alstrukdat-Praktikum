@@ -61,12 +61,12 @@ address Alokasi (infotype X)
 	return P;
 }
 
-void Dealokasi (address *P)
+void Dealokasi (address *P) // 4
 /* I.S. P terdefinisi */
 /* F.S. P dikembalikan ke sistem */
 /* Melakukan dealokasi/pengembalian address P */
 {
-	free(P);
+	free(*P);
 }
 
 /****************** PENCARIAN SEBUAH ELEMEN LIST ******************/
@@ -138,12 +138,12 @@ void InsertFirst (List *L, address P)
 	Next(P) = First(*L);
 	First(*L) = P;
 }
-void InsertAfter (List *L, address P, address Prec)
+void InsertAfter (List *L, address P, address Prec) // 19
 /* I.S. Prec pastilah elemen list dan bukan elemen terakhir, */
 /*      P sudah dialokasi  */
 /* F.S. Insert P sebagai elemen sesudah elemen beralamat Prec */
 {
-	if(First(*L) == Prec) InsertFirst(L, P);
+	if(First(*L) == Next(Prec)) InsertFirst(L, P);
 	else {
 		List* tmp = NextList(L);
 		InsertAfter(tmp, P, Prec);
@@ -183,8 +183,10 @@ void DelP (List *L, infotype X)
 /* List mungkin menjadi kosong karena penghapusan */
 {
 	if(IsEmpty(*L)) return;
-	if(Info(First(*L)) == X) {address* P; DelFirst(L, P);}
-	else {
+	if(Info(First(*L)) == X) {
+		address P;
+		DelFirst(L, &P);
+	} else {
 		List* tmp = NextList(L);
 		DelP(tmp, X);
 		Next(First(*L)) = First(*tmp);
@@ -206,12 +208,12 @@ void DelLast (List *L, address *P)
 	}
 }
 
-void DelAfter (List *L, address *Pdel, address Prec)
+void DelAfter (List *L, address *Pdel, address Prec) // 24-26
 /* I.S. List tidak kosong. Prec adalah anggota list  */
 /* F.S. Menghapus Next(Prec): */
 /*      Pdel adalah alamat elemen list yang dihapus  */
 {
-	if(First(*L) == Prec) DelFirst(L, Pdel);
+	if(First(*L) == Next(Prec)) DelFirst(L, Pdel);
 	else {
 		List* tmp = NextList(L);
 		DelAfter(tmp, Pdel, Prec);
@@ -220,7 +222,7 @@ void DelAfter (List *L, address *Pdel, address Prec)
 }
 
 /****************** PROSES SEMUA ELEMEN LIST ******************/
-void PrintInfo (List L)
+void PrintInfo (List L) // 27
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
 /* Contoh : jika ada tiga elemen bernilai 1, 20, 30 akan dicetak: [1,20,30] */
@@ -252,7 +254,7 @@ infotype Max (List L)
 }
 
 /****************** PROSES TERHADAP LIST ******************/
-void Konkat1 (List *L1, List *L2, List *L3)
+void Konkat1 (List *L1, List *L2, List *L3) // 33 37
 /* I.S. L1 dan L2 sembarang */
 /* F.S. L1 dan L2 kosong, L3 adalah hasil konkatenasi L1 & L2 */
 /* Konkatenasi dua buah list : L1 dan L2    */
