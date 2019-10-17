@@ -198,7 +198,7 @@ void DelLast (List *L, address *P)
 /* Last element baru adalah predesesor elemen terakhir yg lama, */
 /* jika ada */
 {
-	if(IsEmpty(*L)) DelFirst(L, P);
+	if(IsOneElmt(*L)) DelFirst(L, P);
 	else {
 		List* tmp = NextList(L);
 		DelLast(tmp, P);
@@ -263,12 +263,10 @@ void Konkat1 (List *L1, List *L2, List *L3)
 	CreateEmpty(L3);
 	if(IsEmpty(*L1)) First(*L3) = First(*L2);
 	else {
-		if(!IsEmpty(*L1)){
-			First(*L3) = First(*L1);
-			while(!IsOneElmt(*L1)){
-				First(*L1) = Second(*L1);
-			}
-			Next(First(*L1)) = First(*L2);
-		}
+		First(*L3) = First(*L1);
+		while(!IsOneElmt(*L1)) First(*L1) = Second(*L1);
+		Next(First(*L1)) = First(*L2);
 	}
+	CreateEmpty(L1);
+	CreateEmpty(L2);
 }

@@ -35,11 +35,11 @@ int main(){
 	int tmp;
 	address P;
 
-	// InsVLast(&L, 20);
-	// InsVLast(&L, 30);
-	// fori(i, 3){
-	// 	InsVLast(&L, i*22);
-	// }
+	InsVLast(&L, 20);
+	InsVLast(&L, 30);
+	fori(i, 3){
+		InsVLast(&L, i*22);
+	}
 
 	fori(i, 3){
 		InsVLast(&S, i*7);
