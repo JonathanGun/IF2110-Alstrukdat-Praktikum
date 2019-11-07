@@ -24,18 +24,19 @@
 #define forii(i, s, e) for(int i = s; i < e; i++)
 
 int main(){
-	List L = Alokasi(1);
+	List L = Alokasi(-1);
 	fori(i, 4){
 		L = Konso(i, L);
 	}
+	L = Konso(-5, L);
 	PrintList(L); ENDL;
-	printf("Avergae is %.2f", AverageList(L)); ENDL;
+	// printf("Avergae is %.2f", AverageList(L)); ENDL;
 
-	List L1 = Nil;
-	List L2 = Nil;
-	SplitOnX(L, 2, &L1, &L2);
-	PrintList(L1); ENDL;
-	PrintList(L2); ENDL;
-
+	// List L1 = Nil;
+	// List L2 = Nil;
+	// SplitPosNeg(L, &L1, &L2);
+	// PrintList(L1); ENDL;
+	// PrintList(L2); ENDL;
+	PrintList(InverseList(L));
 	return 0;
 }

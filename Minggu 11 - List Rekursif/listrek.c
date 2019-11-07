@@ -221,10 +221,9 @@ L1, dengan urutan kemunculan yang sama. */
 		*L1 = Nil; *L2 = Nil;
 		return;
 	}
-	SplitPosNeg(Tail(L), L1, L2);
+	SplitOnX(Tail(L), X, L1, L2);
 	if(FirstElmt(L) < X) *L1 = Konso(FirstElmt(L), *L1);
 	else *L2 = Konso(FirstElmt(L), *L2);
-	
 }
 
 int ListCompare (List L1, List L2)
@@ -241,7 +240,8 @@ urutan i yang sama, L1[i]=L2[i], namun |L1|<|L2| */
 	if(IsEmpty(L1)) return -1;
 	if(IsEmpty(L2)) return 1;
 	
-	if(FirstElmt(L1) != FirstElmt(L2)) return (FirstElmt(L1) > FirstElmt(L2))?1:-1;
+	if(FirstElmt(L1) > FirstElmt(L2)) return 1;
+	if(FirstElmt(L1) < FirstElmt(L2)) return -1;
 	return ListCompare(Tail(L1), Tail(L2));
 }
 
@@ -251,6 +251,6 @@ memperhatikan urutan ataupun banyaknya elemen).
 Kedua list mungkin kosong. Jika L1 kosong, maka hasilnya false. */
 {
 	if(IsEmpty(L1)) return false;
-	if(Search(L2, FirstElmt(L1))) IsEmpty(Tail(L1))?true:IsAllExist(Tail(L1), L2);
+	if(Search(L2, FirstElmt(L1))) return IsEmpty(Tail(L1))?true:IsAllExist(Tail(L1), L2);
 	return false;
 }
