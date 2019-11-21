@@ -4,6 +4,7 @@
 // Jonathan Yudi Gunawan / 13518084
 
 #include "queue.h"
+#include <stdlib.h>
 
 /* ********* Prototype ********* */
 boolean IsEmpty (Queue Q)
